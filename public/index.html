@@ -6,17 +6,33 @@
   <style>
     body { font-family: Arial, sans-serif; margin: 40px; text-align: center; }
     input, button { padding: 10px; margin: 10px; font-size: 16px; }
-    #role-screen, #game-screen { display: none; }
+    #role-screen, #game-screen, #password-prompt { display: none; }
   </style>
 </head>
 <body>
   <h1>🃏 Online Kart Oyunu</h1>
 
-  <!-- Oda Girişi -->
+  <!-- Oda Kurma ve Listeleme -->
   <div id="lobby-screen">
-    <h2>Odaya Katıl</h2>
-    <input type="text" id="room-input" placeholder="Oda adı yazın (örneğin: takim123)" />
-    <button onclick="joinRoom()">Odaya Gir</button>
+    <h2>Odaya Katıl veya Kur</h2>
+
+    <div>
+      <input type="text" id="room-name" placeholder="Oda adı" />
+      <input type="password" id="room-password" placeholder="Şifre" />
+      <button onclick="createRoom()">Yeni Oda Kur</button>
+    </div>
+
+    <hr />
+    <h3>Mevcut Odalar:</h3>
+    <ul id="room-list"></ul>
+  </div>
+
+  <!-- Şifre Giriş -->
+  <div id="password-prompt">
+    <h3>Odaya Giriş</h3>
+    <p id="selected-room-name"></p>
+    <input type="password" id="join-password" placeholder="Şifre girin" />
+    <button onclick="confirmJoin()">Giriş Yap</button>
   </div>
 
   <!-- Rol Seçimi -->
@@ -28,7 +44,7 @@
 
   <!-- Oyun ekranı -->
   <div id="game-screen">
-    <h3>🎮 Oyun ekranı yüklenecek (buraya kartlar, sorular eklenecek)</h3>
+    <h3>🎮 Oyun ekranı</h3>
     <p>Rol: <span id="roleDisplay"></span> | Oda: <span id="roomDisplay"></span></p>
   </div>
 
