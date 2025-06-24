@@ -1,67 +1,31 @@
-const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
-
+const express = require("express");
 const app = express();
-const server = http.createServer(app);
-const io = socketIo(server);
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
+const PORT = process.env.PORT || 3000;
 
-const PORT = 3000;
+app.use(express.static("public"));
 
-app.use(express.static('public'));
+io.on("connection", (socket) => {
+  console.log("Yeni bir kullanıcı bağlandı");
 
-let players = {};
-let moderator = null;
-
-io.on('connection', (socket) => {
-  console.log(`Kullanıcı bağlandı: ${socket.id}`);
-
-  socket.on('joinGame', (role, name) => {
-    if (role === 'moderator') {
-      moderator = socket.id;
-      console.log(`Moderatör: ${name}`);
-    } else {
-      players[socket.id] = { name: name, cards: [], score: 0 };
-      console.log(`Oyuncu: ${name}`);
-    }
-
-    io.emit('playerList', Object.values(players).map(p => p.name));
+  // Odaya katılma
+  socket.on("joinRoom", (room) => {
+    socket.join(room);
+    socket.room = room;
+    console.log(`Kullanıcı '${room}' odasına katıldı`);
   });
 
-  socket.on('submitCards', (cards) => {
-    if (players[socket.id]) {
-      players[socket.id].cards = cards;
-    }
+  // Rol seçimi
+  socket.on("selectRole", ({ room, role }) => {
+    console.log(`Kullanıcı '${room}' odasında rolünü seçti: ${role}`);
   });
 
-  socket.on('askQuestion', (question) => {
-    io.emit('newQuestion', question);
-  });
-
-  socket.on('submitAnswer', (card) => {
-    io.emit('answerSubmitted', { player: players[socket.id].name, card: card });
-  });
-
-  socket.on('setScores', (scoreData) => {
-    for (let playerId in scoreData) {
-      if (players[playerId]) {
-        players[playerId].score += scoreData[playerId];
-      }
-    }
-    io.emit('updateScores', players);
-  });
-
-  socket.on('disconnect', () => {
-    console.log(`Bağlantı koptu: ${socket.id}`);
-    delete players[socket.id];
-    if (moderator === socket.id) {
-      moderator = null;
-      console.log('Moderatör ayrıldı');
-    }
-    io.emit('playerList', Object.values(players).map(p => p.name));
+  socket.on("disconnect", () => {
+    console.log("Bir kullanıcı ayrıldı");
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`🎮 Oyun sunucusu çalışıyor: http://localhost:${PORT}`);
+http.listen(PORT, () => {
+  console.log(`🎮 Oyun sunucusu çalışıyor: Port ${PORT}`);
 });

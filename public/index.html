@@ -2,60 +2,34 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <title>Kart Oyunu</title>
+  <title>Kart Oyunu - Lobi</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    #oyuncular { margin-top: 10px; font-weight: bold; }
-    .kart, .soru, .puan, .oyuncu-kartlari { margin: 10px 0; }
-    input, button { padding: 5px 10px; margin: 5px 0; }
+    body { font-family: Arial, sans-serif; margin: 40px; text-align: center; }
+    input, button { padding: 10px; margin: 10px; font-size: 16px; }
+    #role-screen, #game-screen { display: none; }
   </style>
 </head>
 <body>
-  <h1>Online Kart Oyunu</h1>
+  <h1>🃏 Online Kart Oyunu</h1>
 
-  <div id="giris">
-    <label>Adınız: <input type="text" id="ad" /></label><br>
-    <label>Rolünüz:
-      <select id="rol">
-        <option value="oyuncu">Oyuncu</option>
-        <option value="moderator">Moderatör</option>
-      </select>
-    </label><br>
-    <button onclick="girisYap()">Giriş Yap</button>
+  <!-- Oda Girişi -->
+  <div id="lobby-screen">
+    <h2>Odaya Katıl</h2>
+    <input type="text" id="room-input" placeholder="Oda adı yazın (örneğin: takim123)" />
+    <button onclick="joinRoom()">Odaya Gir</button>
   </div>
 
-  <div id="oyun" style="display:none;">
-    <div id="rolBilgisi"></div>
-    <div id="oyuncular"></div>
-    
-    <div id="kartlar" class="oyuncu-kartlari" style="display:none;">
-      <label>7 Futbolcu İsmi Girin (virgülle ayırın):</label><br>
-      <input type="text" id="kartListesi" style="width: 100%;" />
-      <button onclick="kartlariGonder()">Kartları Gönder</button>
-    </div>
+  <!-- Rol Seçimi -->
+  <div id="role-screen">
+    <h2>Rolünü Seç</h2>
+    <button onclick="selectRole('moderator')">Moderatör</button>
+    <button onclick="selectRole('player')">Oyuncu</button>
+  </div>
 
-    <div id="soruAlani" class="soru" style="display:none;">
-      <label>Soru: <input type="text" id="soru" style="width: 80%;" /></label>
-      <button onclick="soruSor()">Soruyu Gönder</button>
-    </div>
-
-    <div id="soruGoster" style="font-weight:bold;"></div>
-
-    <div id="cevapAlani" class="kart" style="display:none;">
-      <label>Cevaplamak için kart girin:</label>
-      <input type="text" id="seciliKart" />
-      <button onclick="cevapGonder()">Gönder</button>
-    </div>
-
-    <div id="cevaplarListesi"></div>
-
-    <div id="puanAlani" class="puan" style="display:none;">
-      <label>Oyuncu ID ve Puan (örnek: abc123:1, def456:0.5):</label><br>
-      <input type="text" id="puanGirdisi" style="width: 100%;" />
-      <button onclick="puanlariAyarla()">Puanları Ver</button>
-    </div>
-
-    <div id="skorlar"></div>
+  <!-- Oyun ekranı -->
+  <div id="game-screen">
+    <h3>🎮 Oyun ekranı yüklenecek (buraya kartlar, sorular eklenecek)</h3>
+    <p>Rol: <span id="roleDisplay"></span> | Oda: <span id="roomDisplay"></span></p>
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
